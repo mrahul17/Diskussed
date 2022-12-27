@@ -40,17 +40,18 @@ function setBadge(discussionCount) {
   )
 }
 
-async function fetchFromServiceIfNotCached(discussedUrl){
-  let cacheEntry = await browser.storage.local.get(discussedUrl)
+async function fetchFromServiceIfNotCached(url){
+  const cleanUrl = url.split("?")[0]
+  let cacheEntry = await browser.storage.local.get(cleanUrl)
   console.error("cache", cacheEntry)
   if(!Object.keys(cacheEntry).length){
-    const data = await postData('https://pijjwctkypdkcbvsaupt.functions.supabase.co/Diskussed-backend', { url: discussedUrl })
+    const data = await postData('https://pijjwctkypdkcbvsaupt.functions.supabase.co/Diskussed-backend', { url: cleanUrl })
       console.error("data fetched", data)
-      cacheEntry = {[discussedUrl]: JSON.stringify(data)}
+      cacheEntry = {[cleanUrl]: JSON.stringify(data)}
       console.error("cacheEntry", cacheEntry)
       await browser.storage.local.set(cacheEntry)
   }
-  setBadge(JSON.parse(cacheEntry[discussedUrl]).length)
+  setBadge(JSON.parse(cacheEntry[cleanUrl]).length)
 }
 
 // browser.tabs.onActivated.addListener(function(handleActivated){
