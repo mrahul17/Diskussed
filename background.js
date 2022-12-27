@@ -1,20 +1,31 @@
 console.error('loaded')
-browser.webNavigation.onCommitted.addListener((evt) => {
+// browser.webNavigation.onCommitted.addListener((evt) => {
   
-  if (evt.frameId !== 0) {
-    return;
-  }
-  console.error(evt.url)
-  // TODO: check from localstorage first
-  fetchFromServiceIfNotCached(evt.url).then(()=>{
+//   if (evt.frameId !== 0) {
+//     return;
+//   }
+//   console.error(evt.url)
+//   // TODO: check from localstorage first
+//   fetchFromServiceIfNotCached(evt.url).then(()=>{})
+//   // postData('https://pijjwctkypdkcbvsaupt.functions.supabase.co/Diskussed-backend', { url: evt.url })
+//   // .then((data) => {
+//   //   console.error(data);
+//   //   setBadge(data.length)
+//   // });
+// });
+// https://stackoverflow.com/a/11156533/3363206
+browser.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+   console.error("updated!", changeInfo.url);
+   fetchFromServiceIfNotCached(changeInfo.url).then(()=>{})
+}); 
 
-  })
-  // postData('https://pijjwctkypdkcbvsaupt.functions.supabase.co/Diskussed-backend', { url: evt.url })
-  // .then((data) => {
-  //   console.error(data);
-  //   setBadge(data.length)
-  // });
-});
+browser.tabs.onActivated.addListener(function(activeInfo) {
+  // how to fetch tab url using activeInfo.tabid
+  browser.tabs.get(activeInfo.tabId, function(tab){
+     console.error("activated",tab.url);
+     fetchFromServiceIfNotCached(tab.url).then(()=>{})
+  });
+}); 
 
 function setBadge(discussionCount) {
   let badgeText = ''
