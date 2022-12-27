@@ -15,6 +15,9 @@ console.error('loaded')
 // });
 // https://stackoverflow.com/a/11156533/3363206
 browser.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+   if(!changeInfo.url){
+    return
+   }
    console.error("updated!", changeInfo.url);
    fetchFromServiceIfNotCached(changeInfo.url).then(()=>{})
 }); 
