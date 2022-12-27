@@ -1,0 +1,1 @@
+console.error("log from popup")
