@@ -4,10 +4,10 @@ browser.tabs
     const tbodyRef = document
       .getElementById("discussions")
       .getElementsByTagName("tbody")[0];
-
-    const getCurrentUrlDiscussions = browser.storage.local.get(currentTab.url);
+    const hashedUrl = window.sha256(currentTab.url)
+    const getCurrentUrlDiscussions = browser.storage.local.get(hashedUrl);
     getCurrentUrlDiscussions.then((results) => {
-      const currentUrlResults = results[currentTab.url]
+      const currentUrlResults = results[hashedUrl]
       if(!currentUrlResults){
         return
       }

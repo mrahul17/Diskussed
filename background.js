@@ -13,7 +13,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   console.error("updated!", changeInfo.url);
   const cleanUrl = changeInfo.url.split("?")[0];
   if (shouldCheckForDisccussion(cleanUrl)) {
-    fetchFromServiceIfNotCached(cleanUrl).then(() => {});
+    fetchFromServiceIfNotCached(window.sha256(cleanUrl)).then(() => {});
   }
 });
 
@@ -38,7 +38,7 @@ async function fetchFromServiceIfNotCached(url) {
   if (!Object.keys(cacheEntry).length) {
     const data = await postData(
       "https://pijjwctkypdkcbvsaupt.functions.supabase.co/Diskussed-backend",
-      { url: url }
+      { hashedUrl: url }
     );
     console.error("data fetched", data);
     cacheEntry = { [url]: JSON.stringify(data) };
