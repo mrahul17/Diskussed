@@ -3,6 +3,8 @@ const BLACKLIST_URLS = [
   "moz-extension://",
   "about:",
   "https://www.google.com/search",
+  "http://localhost",
+  "http://127.0.0.1"
 ];
 
 const BACKEND_URL =
