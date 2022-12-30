@@ -6,7 +6,7 @@
     "default_title": "Diskussions",
     "default_popup": "popup.html"
   },
-  "permissions": ["webNavigation", "storage", "tabs"],
+  "permissions": ["storage", "tabs"],
   "background": {
     "scripts": [ "sha256.js", "background.js"  ]
   },
