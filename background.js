@@ -4,7 +4,7 @@ const BLACKLIST_URLS = [
   "about:",
   "https://www.google.com/search",
   "http://localhost",
-  "http://127.0.0.1"
+  "http://127.0.0.1",
 ];
 
 const BACKEND_URL =
@@ -14,16 +14,21 @@ const ANON_AUTH_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpamp3Y3RreXBka2NidnNhdXB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzIxMzczMjQsImV4cCI6MTk4NzcxMzMyNH0.6l6-TIsVaHquK-4hG4_o-tVmteYGP_uLz4j3a-NQLC4";
 
 // https://stackoverflow.com/a/11156533/3363206
-browser.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  if (!changeInfo.url) {
-    return;
-  }
-  console.error("updated!", changeInfo.url);
-  const cleanUrl = getCleanUrl(changeInfo.url);
-  if (shouldCheckForDisccussion(cleanUrl)) {
-    fetchFromServiceIfNotCached(window.sha256(cleanUrl)).then(() => {});
-  }
-});
+browser.tabs.onUpdated.addListener(
+  function (tabId, changeInfo, tab) {
+    if (changeInfo.status !== "complete") {
+      return;
+    }
+    browser.tabs.get(tabId, function (tab) {
+      console.error("updated!", tab.url);
+      const cleanUrl = getCleanUrl(tab.url);
+      if (shouldCheckForDisccussion(cleanUrl)) {
+        fetchFromServiceIfNotCached(window.sha256(cleanUrl)).then(() => {});
+      }
+    });
+  },
+  { properties: ["status"] }
+);
 
 browser.tabs.onActivated.addListener(function (activeInfo) {
   browser.tabs.get(activeInfo.tabId, function (tab) {
@@ -79,6 +84,6 @@ function shouldCheckForDisccussion(url) {
   return true;
 }
 
-function getCleanUrl(url){
-  return url.split("?")[0]
+function getCleanUrl(url) {
+  return url.split("?")[0];
 }
