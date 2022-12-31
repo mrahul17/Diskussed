@@ -19,7 +19,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     return;
   }
   console.error("updated!", changeInfo.url);
-  const cleanUrl = changeInfo.url.split("?")[0];
+  const cleanUrl = getCleanUrl(changeInfo.url);
   if (shouldCheckForDisccussion(cleanUrl)) {
     fetchFromServiceIfNotCached(window.sha256(cleanUrl)).then(() => {});
   }
@@ -28,7 +28,10 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 browser.tabs.onActivated.addListener(function (activeInfo) {
   browser.tabs.get(activeInfo.tabId, function (tab) {
     console.error("activated", tab.url);
-    fetchFromServiceIfNotCached(tab.url).then(() => {});
+    const cleanUrl = getCleanUrl(tab.url);
+    if (shouldCheckForDisccussion(cleanUrl)) {
+      fetchFromServiceIfNotCached(window.sha256(cleanUrl)).then(() => {});
+    }
   });
 });
 
@@ -74,4 +77,8 @@ function shouldCheckForDisccussion(url) {
     return false;
   }
   return true;
+}
+
+function getCleanUrl(url){
+  return url.split("?")[0]
 }
